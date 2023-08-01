@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>/* styles.css */
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.gallery-image {
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  object-fit: cover;
+}
+
+/* styles.css */
+/* ... (previous CSS styles) */
+
+.overlay {
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.overlay img {
+  max-width: 90%;
+  max-height: 90%;
+}
+
+</style>
+<body>
+   
+  <div class="gallery">
+   <div><img class="gallery-image" src="jpg/2000.jpg" alt="Image 1"></div> 
+    <img class="gallery-image" src="jpg/2001.jpg" alt="Image 2">
+    <img class="gallery-image" src="jpg/2002.jpg" alt="Image 2">
+    <img class="gallery-image" src="jpg/2003.jpg" alt="Image 2">
+    <img class="gallery-image" src="jpg/2004.jpg" alt="Image 2">
+
+    <!-- Add more images here -->
+  </div>
+
+  <script>
+    // script.js
+document.addEventListener("DOMContentLoaded", function () {
+  const galleryImages = document.querySelectorAll(".gallery-image");
+
+  function expandImage(event) {
+    const image = event.target;
+    const overlay = document.createElement("div");
+    overlay.classList.add("overlay");
+    const fullScreenImage = new Image();
+    fullScreenImage.src = image.src;
+    overlay.appendChild(fullScreenImage);
+
+    overlay.addEventListener("click", function () {
+      document.body.removeChild(overlay);
+    });
+
+    document.body.appendChild(overlay);
+  }
+
+  galleryImages.forEach((image) => {
+    image.addEventListener("click", expandImage);
+  });
+});
+
+  </script>
+
+
+</body>
+</html>
