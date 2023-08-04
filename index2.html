@@ -220,7 +220,7 @@
   <div class='img-container'>
       <div>
           <p>чер. — лип. 2023</p>
-          <img class="gallery-image" data-front="true" data-year="червень-липень 2023" src="https://texty.github.io/lst/2023.png"/>
+          <img class="gallery-image" data-front="true" data-year="черв.-лип. 2023" src="https://texty.github.io/lst/2023.png"/>
       </div>
       <div>
           <p>літо 2022</p>
@@ -361,122 +361,86 @@
   
   <script>
   
-      // script.js
-  document.addEventListener("DOMContentLoaded", function () {
-    const galleryImages = document.querySelectorAll(".gallery-image");
-  
+  // script.js
+document.addEventListener("DOMContentLoaded", function () {
+  const galleryImages = document.querySelectorAll(".gallery-image");
+  const overlay = document.querySelector('.overlay');
+  const fullScreenImage = document.getElementById('lst-map');
+  const yearParagraph = document.getElementById('year-text');
+  const prevButton = document.getElementById('prev');
+  const nextButton = document.getElementById('next');
+  const closeButton = document.getElementById('close');
+  const toggleRivers = document.querySelector('input#show-rivers');
+  const toggleCities = document.querySelector('input#show-cities');
+  const toggleFront = document.querySelector('input#front-line');
 
+  let dataIndex = 0;
 
-    galleryImages.forEach((image) => {
-    
-      image.addEventListener("click", function(){
-
-        const fullScreenImage = document.getElementById('lst-map');
-        fullScreenImage.src = image.src;
-
-        var dataIndex = parseInt(image.src.replace(/\D/g, ''));
-
-        const yearParagraph = document.getElementById('year-text');
-        var yearString = image.dataset.year
-        let firstCharacter = yearString.charAt(0);
-        firstCharacter = firstCharacter.toUpperCase();
-        let capitalizedString = firstCharacter + yearString.slice(1);
-        yearParagraph.textContent = capitalizedString;
-
-        const is2023 = image.dataset.front;
-        hideFrontLine(is2023)
-
-
-        document.querySelector('#next').addEventListener('click', function(){
-          if(dataIndex >= 2000 && dataIndex < 2022){
-            dataIndex = dataIndex + 1;
-            yearParagraph.textContent = "Літо "+ dataIndex.toString();
-            hideFrontLine('false')
-          } else if(dataIndex === 2022){
-            dataIndex = dataIndex + 1;
-            hideFrontLine('true');
-            yearParagraph.textContent = "Червень-липень "+ dataIndex.toString();
-          }else if( dataIndex === 2023){
-            dataIndex = 2000
-            hideFrontLine('false')
-            yearParagraph.textContent = "Літо "+ dataIndex.toString();
-          }
-         
-          fullScreenImage.src = "https://texty.github.io/lst/" + dataIndex.toString() +".png";
-      })
-
-
-      document.querySelector('#prev').addEventListener('click', function(){
-          if(dataIndex > 2000 && dataIndex <= 2023){
-            dataIndex = dataIndex - 1;
-            yearParagraph.textContent = "Літо "+ dataIndex.toString();
-            hideFrontLine('false')
-          } 
-          else if( dataIndex === 2000){
-            dataIndex = 2023
-            hideFrontLine('true');
-            yearParagraph.textContent = "Червень-липень "+ dataIndex.toString();
-          }
-         
-          fullScreenImage.src = "https://texty.github.io/lst/" + dataIndex.toString() +".png";
-      })
-
-        document.getElementsByClassName('overlay')[0].style.display = "block";
-
-        
-      });
+  galleryImages.forEach((image, index) => {
+    image.addEventListener("click", function () {
+      dataIndex = index;
+      updateImageAndText();
+      overlay.style.display = "block";
     });
-
-    // close button
-    document.getElementById('close').addEventListener("click", function(){
-        document.getElementsByClassName('overlay')[0].style.display = "none";
-    });
-
-    // checkboxes
-    var toggleRivers = document.querySelector('input#show-rivers');
-    toggleRivers.addEventListener('change', function (event) {
-        if (toggleRivers.checked) {
-          document.querySelector('img#rivers').style.display = 'block';
-        } else {
-          document.querySelector('img#rivers').style.display = 'none';
-        }
-    });
-
-
-    var toggleCities = document.querySelector('input#show-cities');
-    toggleCities.addEventListener('change', function (event) {
-        if (toggleCities.checked) {
-          document.querySelector('img#labels').style.display = 'block';
-        } else {
-          document.querySelector('img#labels').style.display = 'none';
-        }
-    });
-
-    var toggleFront = document.querySelector('input#front-line');
-    toggleFront.addEventListener('change', function (event) {
-        if (toggleFront.checked) {
-          document.querySelector('img#frontline').style.display = 'block';
-        } else {
-          document.querySelector('img#frontline').style.display = 'none';
-        }
-    });
-
-
-    function hideFrontLine(checker){
-        document.getElementById('front-line').style.display = "none";
-        document.getElementById('frontline').style.display = "none";
-        document.getElementById('front-line-label').style.display = "none";
-        document.querySelector('input#front-line').checked = false
-        if(checker === 'true') {
-          document.getElementById('front-line').style.display = "block";
-          document.getElementById('front-line-label').style.display = "block";
-        }
-    }
-
-    
-    
-   
   });
+
+  prevButton.addEventListener('click', function () {
+    dataIndex = (dataIndex + 1) % galleryImages.length;
+    updateImageAndText();
+  });
+
+  nextButton.addEventListener('click', function () {
+    dataIndex = (dataIndex + galleryImages.length - 1) % galleryImages.length;
+    
+    updateImageAndText();
+  });
+
+  closeButton.addEventListener("click", function () {
+    overlay.style.display = "none";
+  });
+
+  toggleRivers.addEventListener('change', function () {
+    document.querySelector('img#rivers').style.display = toggleRivers.checked ? 'block' : 'none';
+  });
+
+  toggleCities.addEventListener('change', function () {
+    document.querySelector('img#labels').style.display = toggleCities.checked ? 'block' : 'none';
+  });
+
+  toggleFront.addEventListener('change', function () {
+    document.getElementById('frontline').style.display = toggleFront.checked ? "block" : "none";
+    // document.getElementById('frontline-label').style.display = toggleFront.checked ? "block" : "none";
+  });
+
+  function updateImageAndText() {
+    const image = galleryImages[dataIndex];
+    fullScreenImage.src = image.src;
+    const yearString = image.dataset.year;
+    const capitalizedString = yearString.charAt(0).toUpperCase() + yearString.slice(1);
+    yearParagraph.textContent = capitalizedString;
+
+  const is2023 = image.dataset.front;
+  hideFrontLine(is2023);
+
+  // Hide input#front-line and its label if dataIndex != 2023
+  if (parseInt(image.src.replace(/\D/g, '')) !== 2023) {
+    toggleFront.style.display = 'none';
+    document.getElementById('front-line-label').style.display = 'none';
+  } else {
+    toggleFront.style.display = 'block';
+    document.getElementById('front-line-label').style.display = 'block';
+  }
+  }
+
+  function hideFrontLine(isFrontLineVisible) {
+    toggleFront.checked = isFrontLineVisible === 'true';
+    document.getElementById('frontline').style.display = toggleFront.checked ? "block" : "none";
+  }
+
+  // Initialize the state based on the first image
+  updateImageAndText();
+});
+
   
     </script>
 
